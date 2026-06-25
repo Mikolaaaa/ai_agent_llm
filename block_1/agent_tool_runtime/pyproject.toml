@@ -1,0 +1,14 @@
+[project]
+name = "block-1-agent-runtime"
+version = "0.1.0"
+description = "Educational Agent Tool Runtime for block 1 of the LLM/AI Agent engineer roadmap"
+requires-python = ">=3.11"
+dependencies = []
+
+[tool.pytest.ini_options]
+pythonpath = ["src"]
+testpaths = ["tests"]
+
+[tool.ruff]
+line-length = 100
+target-version = "py311"
