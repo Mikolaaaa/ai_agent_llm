@@ -28,6 +28,16 @@ class RuntimeErrorInfo:
         data["type"] = self.type.value
         return data
 
+    @classmethod
+    def from_dict(cls, data: dict[str, Any]) -> RuntimeErrorInfo:
+        return cls(
+            type=ErrorType(data["type"]),
+            code=data["code"],
+            message=data["message"],
+            retryable=bool(data.get("retryable", False)),
+            details=data.get("details"),
+        )
+
 
 class AgentRuntimeError(Exception):
     error_type: ErrorType = ErrorType.RUNTIME
@@ -101,4 +111,3 @@ def map_exception(exc: BaseException) -> RuntimeErrorInfo:
         retryable=False,
         details={"exception_class": exc.__class__.__name__},
     )
-

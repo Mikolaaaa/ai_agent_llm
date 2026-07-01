@@ -17,6 +17,14 @@ class AgentRunHandler(BaseHTTPRequestHandler):
         if self.path == "/health":
             self._json(200, {"status": "ok"})
             return
+        if self.path.startswith("/runs/"):
+            run_id = self.path.removeprefix("/runs/")
+            state = asyncio.run(self.runtime.store.get(run_id))
+            if state is None:
+                self._json(404, {"error": "run_not_found", "run_id": run_id})
+                return
+            self._json(200, state.to_dict())
+            return
         self._json(404, {"error": "not_found"})
 
     def do_POST(self) -> None:

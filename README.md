@@ -6,7 +6,7 @@
 
 ## Текущий статус
 
-За первую неделю сделал рабочий MVP/Normal-прототип по блоку `Agent Tool Runtime`.
+Сделал рабочий Strong-прототип по блоку `Agent Tool Runtime`.
 
 Что уже есть:
 
@@ -19,14 +19,17 @@
 - timeout/retry policy;
 - logs с `trace_id`;
 - CLI/API запуск;
-- unit и integration tests.
+- SQLite persistent run store;
+- idempotency для side-effect tool;
+- unit, integration и API component tests.
 
-Оцениваю блок примерно на 70%:
+Оцениваю блок как практически закрытый по реализации:
 
 - базовый runtime работает;
-- основные failure cases покрыты тестами;
-- продолжаю добирать теорию и архитектурные trade-offs;
-- дальше хочу лучше закрепить edge cases, side-effect tools, persistent state и real LLM adapter.
+- failure cases покрыты тестами;
+- side-effect tool требует confirmation и поддерживает idempotency key;
+- state можно хранить in-memory или в SQLite;
+- остаётся добрать real LLM adapter уже как следующий слой, не как core runtime.
 
 ## Структура
 
@@ -38,7 +41,7 @@ block_1/
       engine/          # runtime loop, executor, permissions
       model/           # fake model
       tools/           # registry and built-in tools
-      storage/         # in-memory run store
+      storage/         # in-memory and SQLite run stores
       observability/   # trace events
       interfaces/      # CLI and HTTP API
     tests/
@@ -62,9 +65,13 @@ PYTHONPATH=src python3 -m unittest discover -s tests
 Ожидаемый результат:
 
 ```text
-Ran 23 tests
+Ran 28 tests
 OK
 ```
+
+В sandbox-окружениях API socket test может быть `skipped`, если запрещён bind
+на локальный порт. На обычной машине тест проверяет `GET /health`,
+`POST /runs` и `GET /runs/{run_id}`.
 
 Запустить happy path через CLI:
 
@@ -81,6 +88,15 @@ PYTHONPATH=src python3 -m agent_runtime.interfaces.cli "find agent runtime docs"
 - `summary`;
 - `final_answer`.
 
+Проверить persistent state через SQLite:
+
+```bash
+PYTHONPATH=src python3 -m agent_runtime.interfaces.cli \
+  "find agent runtime docs" \
+  --sqlite /tmp/agent_runtime_demo.sqlite3 \
+  --json
+```
+
 Проверить failure cases:
 
 ```bash
@@ -92,16 +108,13 @@ PYTHONPATH=src python3 -m agent_runtime.interfaces.cli "loop forever" --max-iter
 Ожидаемо:
 
 - invalid arguments дают `validation_error`;
-- запрещённый tool даёт `permission_error`;
+- запрещённый/неподтверждённый side-effect tool даёт `permission_error`;
 - превышение iterations даёт `limit_error`.
 
 ## Что дальше
 
-Следующие улучшения по блоку:
+Следующие улучшения уже за пределами core runtime блока:
 
-- лучше разобрать side-effect tools и idempotency;
-- добавить persistent storage;
 - добавить adapter для реальной LLM;
 - расширить observability;
-- пройти edge cases руками и через тесты.
-
+- заменить stdlib HTTP API на production-like FastAPI/Pydantic слой при необходимости.

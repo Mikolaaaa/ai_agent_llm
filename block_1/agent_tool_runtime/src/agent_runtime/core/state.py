@@ -41,6 +41,14 @@ class Message:
         data["role"] = self.role.value
         return data
 
+    @classmethod
+    def from_dict(cls, data: dict[str, Any]) -> Message:
+        return cls(
+            role=MessageRole(data["role"]),
+            content=data["content"],
+            metadata=data.get("metadata", {}),
+        )
+
 
 @dataclass(slots=True)
 class RunLimits:
@@ -67,6 +75,10 @@ class RunLimits:
 
     def to_dict(self) -> dict[str, Any]:
         return asdict(self)
+
+    @classmethod
+    def from_dict(cls, data: dict[str, Any]) -> RunLimits:
+        return cls(**data)
 
 
 @dataclass(slots=True)
@@ -104,6 +116,18 @@ class ToolCall:
             "created_at": self.created_at,
         }
 
+    @classmethod
+    def from_dict(cls, data: dict[str, Any]) -> ToolCall:
+        return cls(
+            id=data["id"],
+            name=data["name"],
+            arguments=data["arguments"],
+            status=ToolCallStatus(data["status"]),
+            attempts=data.get("attempts", 0),
+            error=RuntimeErrorInfo.from_dict(data["error"]) if data.get("error") else None,
+            created_at=data["created_at"],
+        )
+
 
 @dataclass(slots=True)
 class ToolResult:
@@ -125,6 +149,18 @@ class ToolResult:
             "latency_ms": self.latency_ms,
             "created_at": self.created_at,
         }
+
+    @classmethod
+    def from_dict(cls, data: dict[str, Any]) -> ToolResult:
+        return cls(
+            call_id=data["call_id"],
+            tool_name=data["tool_name"],
+            output=data.get("output"),
+            ok=bool(data["ok"]),
+            error=RuntimeErrorInfo.from_dict(data["error"]) if data.get("error") else None,
+            latency_ms=data.get("latency_ms"),
+            created_at=data["created_at"],
+        )
 
 
 @dataclass(slots=True)
@@ -273,3 +309,26 @@ class AgentRunState:
             "created_at": self.created_at,
             "updated_at": self.updated_at,
         }
+
+    @classmethod
+    def from_dict(cls, data: dict[str, Any]) -> AgentRunState:
+        return cls(
+            id=data["id"],
+            trace_id=data["trace_id"],
+            session_id=data["session_id"],
+            status=RunStatus(data["status"]),
+            messages=[Message.from_dict(message) for message in data.get("messages", [])],
+            context=data.get("context", {}),
+            tool_calls=[ToolCall.from_dict(call) for call in data.get("tool_calls", [])],
+            tool_results=[
+                ToolResult.from_dict(result) for result in data.get("tool_results", [])
+            ],
+            artifacts=data.get("artifacts", {}),
+            limits=RunLimits.from_dict(data["limits"]),
+            metadata=data.get("metadata", {}),
+            iterations=data.get("iterations", 0),
+            final_answer=data.get("final_answer"),
+            error=RuntimeErrorInfo.from_dict(data["error"]) if data.get("error") else None,
+            created_at=data["created_at"],
+            updated_at=data["updated_at"],
+        )

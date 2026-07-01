@@ -8,6 +8,7 @@ from agent_runtime.core.state import Principal, RunLimits
 from agent_runtime.observability.events import JsonStdoutEventSink
 from agent_runtime.model.fake import KeywordFakeModel
 from agent_runtime.engine.runtime import AgentRuntime
+from agent_runtime.storage.sqlite import SQLiteRunStore
 
 
 def build_parser() -> argparse.ArgumentParser:
@@ -16,6 +17,7 @@ def build_parser() -> argparse.ArgumentParser:
     parser.add_argument("--max-iterations", type=int, default=6)
     parser.add_argument("--allow", action="append", default=None, help="Allowed tool name. Can be repeated.")
     parser.add_argument("--confirm", action="append", default=None, help="Confirmed side-effect tool name.")
+    parser.add_argument("--sqlite", default=None, help="Optional SQLite file for persistent run state.")
     parser.add_argument("--json", action="store_true", help="Print full run state as JSON.")
     return parser
 
@@ -28,7 +30,8 @@ async def main_async() -> int:
         scopes={"documents.read", "calculator.use", "notes.write"},
         owned_document_ids={"doc_1", "doc_2", "doc_3"},
     )
-    runtime = AgentRuntime(model=KeywordFakeModel(), events=JsonStdoutEventSink())
+    store = SQLiteRunStore(args.sqlite) if args.sqlite else None
+    runtime = AgentRuntime(model=KeywordFakeModel(), store=store, events=JsonStdoutEventSink())
     state = await runtime.run(
         args.message,
         principal=principal,

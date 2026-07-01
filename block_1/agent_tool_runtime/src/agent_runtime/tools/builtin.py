@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import asyncio
+import json
 from typing import Any
 from uuid import uuid4
 
@@ -27,6 +28,7 @@ DOCUMENTS = {
 }
 
 NOTES: dict[str, dict[str, Any]] = {}
+NOTE_IDEMPOTENCY_INDEX: dict[str, dict[str, str]] = {}
 
 
 async def search_documents(args: dict[str, Any]) -> dict[str, Any]:
@@ -63,9 +65,39 @@ async def calculator(args: dict[str, Any]) -> dict[str, Any]:
 
 
 async def save_note(args: dict[str, Any]) -> dict[str, Any]:
+    idempotency_key = args.get("idempotency_key")
+    fingerprint = _note_fingerprint(args)
+
+    if idempotency_key and idempotency_key in NOTE_IDEMPOTENCY_INDEX:
+        existing = NOTE_IDEMPOTENCY_INDEX[idempotency_key]
+        if existing["fingerprint"] != fingerprint:
+            raise ValidationRuntimeError(
+                "Idempotency key was already used with different note arguments.",
+                details={"idempotency_key": idempotency_key},
+            )
+        return {"note_id": existing["note_id"], "saved": True, "idempotent_replay": True}
+
     note_id = f"note_{uuid4().hex[:8]}"
     NOTES[note_id] = {"id": note_id, "title": args["title"], "content": args["content"]}
-    return {"note_id": note_id, "saved": True}
+    if idempotency_key:
+        NOTE_IDEMPOTENCY_INDEX[idempotency_key] = {
+            "fingerprint": fingerprint,
+            "note_id": note_id,
+        }
+    return {"note_id": note_id, "saved": True, "idempotent_replay": False}
+
+
+def _note_fingerprint(args: dict[str, Any]) -> str:
+    return json.dumps(
+        {"title": args["title"], "content": args["content"]},
+        ensure_ascii=False,
+        sort_keys=True,
+    )
+
+
+def reset_demo_state() -> None:
+    NOTES.clear()
+    NOTE_IDEMPOTENCY_INDEX.clear()
 
 
 async def flaky_status(args: dict[str, Any]) -> dict[str, Any]:
@@ -184,15 +216,17 @@ def build_default_registry() -> ToolRegistry:
                 "properties": {
                     "title": {"type": "string", "minLength": 1, "maxLength": 100},
                     "content": {"type": "string", "minLength": 1, "maxLength": 2000},
+                    "idempotency_key": {"type": "string", "minLength": 8, "maxLength": 120},
                 },
             },
             output_schema={
                 "type": "object",
-                "required": ["note_id", "saved"],
+                "required": ["note_id", "saved", "idempotent_replay"],
                 "additionalProperties": False,
                 "properties": {
                     "note_id": {"type": "string"},
                     "saved": {"type": "boolean"},
+                    "idempotent_replay": {"type": "boolean"},
                 },
             },
         )
