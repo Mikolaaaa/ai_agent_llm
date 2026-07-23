@@ -1,0 +1,10 @@
+[project]
+name = "block-2-mcp-tool-server"
+version = "0.1.0"
+description = "Educational MCP Tool Server + Agent Runtime integration for block 2"
+requires-python = ">=3.11"
+dependencies = []
+
+[tool.ruff]
+line-length = 100
+target-version = "py311"
