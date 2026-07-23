@@ -1,7 +1,7 @@
 from __future__ import annotations
 
-from mcp_tool_server.contracts import ServerContext, ToolContract
-from mcp_tool_server.errors import MCPPermissionError
+from mcp_tool_server.core.contracts import ServerContext, ToolContract
+from mcp_tool_server.core.errors import MCPPermissionError
 
 
 def assert_tool_allowed(tool: ToolContract, context: ServerContext) -> None:
@@ -24,4 +24,3 @@ def assert_tool_allowed(tool: ToolContract, context: ServerContext) -> None:
             f"Tool '{tool.name}' has side effects and requires confirmation.",
             details={"tool_name": tool.name},
         )
-

@@ -1,8 +1,8 @@
 from __future__ import annotations
 
-from mcp_tool_server.contracts import ToolContract
-from mcp_tool_server.errors import MCPContractError, MCPToolNotFoundError
-from mcp_tool_server.tools import (
+from mcp_tool_server.core.contracts import ToolContract
+from mcp_tool_server.core.errors import MCPContractError, MCPToolNotFoundError
+from mcp_tool_server.tools.handlers import (
     calculate_metric,
     get_document,
     get_user_context,

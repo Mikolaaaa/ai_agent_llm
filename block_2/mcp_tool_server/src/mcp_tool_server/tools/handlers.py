@@ -4,8 +4,8 @@ from statistics import mean
 from typing import Any
 from uuid import uuid4
 
-from mcp_tool_server.data import DOCUMENTS, NOTES, USER_CONTEXTS
-from mcp_tool_server.errors import MCPDependencyError, MCPValidationError
+from mcp_tool_server.core.errors import MCPDependencyError, MCPValidationError
+from mcp_tool_server.tools.data import DOCUMENTS, NOTES, USER_CONTEXTS
 
 
 async def search_documents(args: dict[str, Any]) -> dict[str, Any]:

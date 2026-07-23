@@ -3,9 +3,9 @@ from __future__ import annotations
 from dataclasses import dataclass
 from typing import Any
 
-from mcp_tool_server.contracts import PROTOCOL_VERSION, ServerContext
-from mcp_tool_server.errors import MCPProtocolError, MCPToolExecutionError
-from mcp_tool_server.server import JSONRPC_VERSION, MCPToolServer
+from mcp_tool_server.core.contracts import PROTOCOL_VERSION, ServerContext
+from mcp_tool_server.core.errors import MCPProtocolError, MCPToolExecutionError
+from mcp_tool_server.mcp.server import JSONRPC_VERSION, MCPToolServer
 
 
 @dataclass(slots=True)

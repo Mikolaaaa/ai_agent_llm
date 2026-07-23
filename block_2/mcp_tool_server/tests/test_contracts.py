@@ -2,8 +2,8 @@ from __future__ import annotations
 
 import unittest
 
-from mcp_tool_server.errors import MCPContractError
-from mcp_tool_server.registry import build_default_registry, build_incompatible_registry
+from mcp_tool_server.core.errors import MCPContractError
+from mcp_tool_server.tools.registry import build_default_registry, build_incompatible_registry
 
 
 class ContractTests(unittest.TestCase):

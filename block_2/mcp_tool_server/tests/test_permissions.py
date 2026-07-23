@@ -2,9 +2,9 @@ from __future__ import annotations
 
 import unittest
 
-from mcp_tool_server.client import LocalMCPClient
-from mcp_tool_server.contracts import ServerContext
-from mcp_tool_server.server import MCPToolServer
+from mcp_tool_server.core.contracts import ServerContext
+from mcp_tool_server.mcp.client import LocalMCPClient
+from mcp_tool_server.mcp.server import MCPToolServer
 
 
 class PermissionTests(unittest.IsolatedAsyncioTestCase):
@@ -54,4 +54,3 @@ class PermissionTests(unittest.IsolatedAsyncioTestCase):
 
         self.assertFalse(result.is_error)
         self.assertTrue(result.structured_content["saved"])
-

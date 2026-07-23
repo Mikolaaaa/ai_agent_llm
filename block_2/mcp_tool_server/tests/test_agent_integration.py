@@ -6,10 +6,10 @@ from agent_runtime.core.state import Principal
 from agent_runtime.engine.runtime import AgentRuntime
 from agent_runtime.model.fake import FinalAnswer, ScriptedFakeModel, ToolCallRequest
 
-from mcp_tool_server.agent_integration import build_mcp_proxy_registry
-from mcp_tool_server.client import LocalMCPClient
-from mcp_tool_server.contracts import ServerContext
-from mcp_tool_server.server import MCPToolServer
+from mcp_tool_server.core.contracts import ServerContext
+from mcp_tool_server.integration.agent_runtime import build_mcp_proxy_registry
+from mcp_tool_server.mcp.client import LocalMCPClient
+from mcp_tool_server.mcp.server import MCPToolServer
 
 
 class AgentIntegrationTests(unittest.IsolatedAsyncioTestCase):
@@ -74,4 +74,3 @@ class AgentIntegrationTests(unittest.IsolatedAsyncioTestCase):
 
         self.assertEqual(state.status.value, "failed")
         self.assertEqual(state.error.code, "dependency_error")
-

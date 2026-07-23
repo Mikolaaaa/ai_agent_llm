@@ -107,4 +107,3 @@ def map_exception(exc: BaseException) -> MCPErrorInfo:
         retryable=False,
         details={"exception_class": exc.__class__.__name__},
     )
-

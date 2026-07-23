@@ -4,9 +4,9 @@ import argparse
 import asyncio
 import json
 
-from mcp_tool_server.client import LocalMCPClient
-from mcp_tool_server.contracts import ServerContext
-from mcp_tool_server.server import MCPToolServer
+from mcp_tool_server.core.contracts import ServerContext
+from mcp_tool_server.mcp.client import LocalMCPClient
+from mcp_tool_server.mcp.server import MCPToolServer
 
 
 async def _list_tools(args: argparse.Namespace) -> None:
@@ -48,7 +48,7 @@ async def _agent_demo(args: argparse.Namespace) -> None:
     from agent_runtime.engine.runtime import AgentRuntime
     from agent_runtime.model.fake import FinalAnswer, ScriptedFakeModel, ToolCallRequest
 
-    from mcp_tool_server.agent_integration import build_mcp_proxy_registry
+    from mcp_tool_server.integration.agent_runtime import build_mcp_proxy_registry
 
     client = _client(args)
     registry = await build_mcp_proxy_registry(client)
@@ -88,7 +88,7 @@ async def _agent_error_demo(args: argparse.Namespace) -> None:
     from agent_runtime.engine.runtime import AgentRuntime
     from agent_runtime.model.fake import ScriptedFakeModel, ToolCallRequest
 
-    from mcp_tool_server.agent_integration import build_mcp_proxy_registry
+    from mcp_tool_server.integration.agent_runtime import build_mcp_proxy_registry
 
     client = _client(args)
     registry = await build_mcp_proxy_registry(client)

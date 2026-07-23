@@ -30,4 +30,3 @@ class InMemoryEventSink:
 
     def list(self) -> list[dict[str, Any]]:
         return [event.to_dict() for event in self.events]
-

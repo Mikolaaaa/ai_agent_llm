@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from typing import Any
 
-from mcp_tool_server.client import LocalMCPClient
+from mcp_tool_server.mcp.client import LocalMCPClient
 
 
 async def build_mcp_proxy_registry(client: LocalMCPClient):

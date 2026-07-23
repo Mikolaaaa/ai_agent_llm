@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from typing import Any
 
-from mcp_tool_server.errors import MCPValidationError
+from mcp_tool_server.core.errors import MCPValidationError
 
 
 JSONSchema = dict[str, Any]
@@ -119,4 +119,3 @@ def _matches_type(value: Any, type_name: str) -> bool:
     if type_name == "null":
         return value is None
     return False
-

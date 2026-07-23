@@ -6,22 +6,22 @@ import sys
 from time import perf_counter
 from typing import Any
 
-from mcp_tool_server.contracts import (
+from mcp_tool_server.core.contracts import (
     PROTOCOL_VERSION,
     SUPPORTED_PROTOCOL_VERSIONS,
     MCPToolCallResult,
     ServerContext,
 )
-from mcp_tool_server.errors import (
+from mcp_tool_server.core.errors import (
     MCPErrorInfo,
     MCPProtocolError,
     MCPServerError,
     MCPTimeoutError,
     map_exception,
 )
-from mcp_tool_server.events import InMemoryEventSink
-from mcp_tool_server.permissions import assert_tool_allowed
-from mcp_tool_server.registry import ToolRegistry, build_default_registry
+from mcp_tool_server.core.events import InMemoryEventSink
+from mcp_tool_server.core.permissions import assert_tool_allowed
+from mcp_tool_server.tools.registry import ToolRegistry, build_default_registry
 
 
 JSONRPC_VERSION = "2.0"

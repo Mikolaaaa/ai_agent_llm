@@ -4,8 +4,8 @@ from collections.abc import Awaitable, Callable
 from dataclasses import dataclass, field
 from typing import Any
 
-from mcp_tool_server.errors import MCPContractError, MCPValidationError
-from mcp_tool_server.validation import JSONSchema, assert_valid_schema, validate_payload
+from mcp_tool_server.core.errors import MCPContractError, MCPValidationError
+from mcp_tool_server.core.validation import JSONSchema, assert_valid_schema, validate_payload
 
 
 PROTOCOL_VERSION = "2025-11-25"
